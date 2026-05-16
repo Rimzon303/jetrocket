@@ -1,9 +1,9 @@
-```python
 import asyncio
 import random
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.filters import Command
+from aiogram.enums import ParseMode
 
 # Вставь сюда свой токен, полученный от @BotFather
 API_TOKEN = 'ВАШ_ТОКЕН_ЗДЕСЬ'
@@ -21,14 +21,13 @@ main_menu = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-# Обработчик команды /start
 @dp.message(Command("start"))
 async def start_command(message: types.Message):
     await message.answer(
-        "👋 Привет! Добро пожаловать в *Топ гифт сигнал*.\n"
+        "👋 Привет! Добро пожаловать в Топ гифт сигнал.\n"
         "Здесь ты можешь испытывать удачу в кейсах или получать сигналы для игр!",
         reply_markup=main_menu,
-        parse_mode="Markdown"
+        parse_mode=ParseMode.HTML
     )
 
 # Логика сигналов
@@ -38,9 +37,9 @@ async def give_signal(message: types.Message):
     random_x = round(random.uniform(0.0, 10000.0), 2)
     
     await message.answer(
-        f"📊 **Прогноз на следующий раунд:**\n"
-        f"📈 Коэффициент: `{random_x}x`",
-        parse_mode="Markdown"
+        f"📊 <b>Прогноз на следующий раунд:</b>\n"
+        f"📈 Коэффициент: <code>{random_x}x</code>",
+        parse_mode=ParseMode.HTML
     )
 
 # Логика кейса All in
@@ -52,7 +51,7 @@ async def open_case_allin(message: types.Message):
     win_amount = round(random.uniform(0, 2), 2) # Пример выигрыша
     await message.answer(f"🎉 Результат: {win_amount} TON!")
 
-# Другие кейсы
+# Другие кейсы (Меню)
 @dp.message(F.text == "🎁 Другие кейсы")
 async def other_cases(message: types.Message):
     kb = ReplyKeyboardMarkup(
@@ -65,23 +64,30 @@ async def other_cases(message: types.Message):
     )
     await message.answer("Выберите дополнительный кейс:", reply_markup=kb)
 
-# Возврат в главное меню
+# Логика для кейса Новичок
+@dp.message(F.text == "Кейс 'Новичок' (0.1 TON)")
+async def open_case_novice(message: types.Message):
+    await message.answer("🔄 Открываем кейс Новичок за 0.1 TON...")
+    await asyncio.sleep(1.2)
+    win_amount = round(random.uniform(0, 0.4), 2)
+    await message.answer(f"🎉 Результат: {win_amount} TON!")
+
+# Логика для кейса Мажор
+@dp.message(F.text == "Кейс 'Мажор' (5.0 TON)")
+async def open_case_major(message: types.Message):
+    await message.answer("🔄 Открываем кейс Мажор за 5.0 TON...")
+    await asyncio.sleep(2.0)
+    win_amount = round(random.uniform(0, 15), 2)
+    await message.answer(f"🎉 Результат: {win_amount} TON!")
+
+# Кнопка Назад
 @dp.message(F.text == "🔙 Назад")
 async def back_to_main(message: types.Message):
     await message.answer("Главное меню:", reply_markup=main_menu)
 
-# Точка входа в приложение
 async def main():
     print("Бот запущен!")
     await dp.start_polling(bot)
 
-if __name__ == "__main__":
+if name == "__main__":
     asyncio.run(main())
-```
-
-### Что исправлено и улучшено:
-- Исправлена ошибка в условии `if __name__ == "__main__":`.
-- Код структурирован для лучшей читаемости.
-- Добавлены комментарии к ключевым блокам.
-- Все функции и переменные названы понятно.
-- Оставлены места для расширения (например, добавление новых кейсов).
